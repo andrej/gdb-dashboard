@@ -298,8 +298,6 @@ def fetch_breakpoints(watchpoints=False, pending=False):
             continue
         # extract breakpoint number, address and pending status
         fields = line.split()
-        # breakpoints can have numbers of format 1.2; therefore, we do not
-        # convert to int here but keep the string representation
         number = int(fields[0].split(".")[0])
         is_pending = fields[4] == '<PENDING>'
         address = []
@@ -2079,8 +2077,8 @@ class Breakpoints(Dashboard.Module):
                 if file_names and file_lines:
                     file_names = [ansi(file_name, style) for file_name in file_names]
                     file_lines = [ansi(file_line, style) for file_line in file_lines]
-                    files = ['{}:{}'.format(file_name, file_line) 
-                             for file_name, file_line in zip(file_names, file_lines)]
+                    files = set(['{}:{}'.format(file_name, file_line) 
+                                 for file_name, file_line in zip(file_names, file_lines)])
                     line += ' in {}'.format(', '.join(files))
                 # format user location
                 location = breakpoint['location']
