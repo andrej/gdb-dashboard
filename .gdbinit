@@ -316,13 +316,6 @@ def fetch_breakpoints(watchpoints=False, pending=False):
                 parsed_breakpoints[number][0].append(address_info)
         except ValueError:
             pass
-        if number not in parsed_breakpoints:
-            parsed_breakpoints[number] = address, is_pending
-        else:
-            # store all addresses of breakpoints in a list
-            breakpoint = parsed_breakpoints[number]
-            parsed_breakpoints[number] = (breakpoint[0] + address, 
-                                          breakpoint[1] | is_pending)
     # fetch breakpoints from the API and complement with address and source
     # information
     breakpoints = []
@@ -1158,9 +1151,8 @@ class Source(Dashboard.Module):
             end = len(self.source_lines)
         else:
             end = max(end, 0)
-        # find the breakpoints for the current file
-        breakpoints = list(filter(lambda x: x.get('file_name') == file_name, fetch_breakpoints()))
         # return the source code listing
+        breakpoints = fetch_breakpoints()
         out = []
         number_format = '{{:>{}}}'.format(len(str(end)))
         for number, line in enumerate(self.source_lines[start:end], start + 1):
